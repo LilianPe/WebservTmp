@@ -6,7 +6,7 @@
 /*   By: lperthui <lperthui@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 16:45:34 by lperthui          #+#    #+#             */
-/*   Updated: 2025/03/14 17:18:23 by lperthui         ###   ########.fr       */
+/*   Updated: 2025/03/16 22:10:22 by lperthui         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,16 @@
 # include <vector>
 # include <string>
 # include "File.hpp"
+# include "Methods.hpp"
 
 class Route {
 
 	private :
-		std::map<std::string, File>				_files; // a init
-		std::map<int, File>						_errorFiles; // a init
-		std::vector<std::string>				_methods; // a init avec parseLimits()
-		std::vector<std::string>				_acceptedExtensions; // a init une fois que les Files seront parse
-		File									_defaultFile; // a init une fois que les files seront parse
+		std::map<std::string, File>				_files; // a init ? Si oui en parcourant le repertoire root
+		std::map<int, File>						_errorFiles;
+		Methods									_methods;
+		std::vector<std::string>				_acceptedExtensions; // a init a partir de quoi ?
+		File									_defaultFile; // a init une fois que les files seront parse, fichier charge par defaut sur la route
 		std::string								_location;
 		std::string								_root;
 		std::string								_redirection;
@@ -36,34 +37,38 @@ class Route {
 		std::map<std::string, std::string>		_fastcgiParam;
 		std::vector<std::string>				_include;
 		std::string								_clientBodyTempPath;
+		std::string								_uploadMaxFilesize;
+		std::string								_clientMaxBodysize;
 		//ajouter uploadMaxSize
 		
 		public :
 		Route();
 		Route(const Route &route);
-		Route(std::map<std::string, std::vector<std::string> > data, std::map<std::string, std::string> fastcgiParam, std::string location);
+		Route(std::map<std::string, std::vector<std::string> > data, std::map<std::string, std::string> fastcgiParam, std::string location, Methods method, std::map<int, File> errorFiles);
 		~Route();
 		
 		// methods
-		void init(std::map<std::string, std::vector<std::string> > data, std::map<std::string, std::string> fastcgiParam, std::string location);
+		void init(std::map<std::string, std::vector<std::string> > data, std::map<std::string, std::string> fastcgiParam, std::string location, Methods method, std::map<int, File> errorFiles);
 
 		// getters
-		std::map<std::string, File>				getFiles();
-		std::map<int, File>						getErrorFiles();
-		std::vector<std::string>				getMethods();
-		std::vector<std::string>				getAcceptedExtensions();
-		File									getDefaultFile();
-		std::string								getLocation();
-		std::string								getRoot();
-		std::string								getRedirection();
-		int										getRedirectionCode();
-		bool									getInternal();
-		bool									getAutoIndex();
-		std::string								getFastcgiPass();
-		std::string								getFastcgiIndex();
-		std::map<std::string, std::string>		getFastcgiParam();
-		std::vector<std::string>				getInclude();
-		std::string								getClientBodyTempPath();
+		const std::map<std::string, File>&			getFiles();
+		const std::map<int, File>&					getErrorFiles();
+		Methods										getMethods();
+		const std::vector<std::string>&				getAcceptedExtensions();
+		File										getDefaultFile();
+		std::string									getLocation();
+		std::string									getRoot();
+		std::string									getRedirection();
+		int											getRedirectionCode();
+		bool										getInternal();
+		bool										getAutoIndex();
+		std::string									getFastcgiPass();
+		std::string									getFastcgiIndex();
+		const std::map<std::string, std::string>&	getFastcgiParam();
+		const std::vector<std::string>&				getInclude();
+		std::string									getClientBodyTempPath();
+		std::string									getUploadMaxFilesize();
+		std::string									getClientMaxBodysize();
 
 };
 

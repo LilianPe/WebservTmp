@@ -6,7 +6,7 @@
 /*   By: lperthui <lperthui@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 16:55:45 by lperthui          #+#    #+#             */
-/*   Updated: 2025/03/14 15:52:53 by lperthui         ###   ########.fr       */
+/*   Updated: 2025/03/16 21:36:15 by lperthui         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,25 @@
 class Http {
 
 	private :
-		std::vector<Server>	_servers;
-		std::string			_serverName; // mettre un tableau de string pour stocker tous les noms du premier server
-		Server				_defaultServer;
-		std::map<int, File>	_errorFiles;
-		std::string			_clientMaxBody;
+		std::vector<Server>			_servers;
+		std::vector<std::string>	_serverName;
+		Server						_defaultServer;
+		std::map<int, File>			_errorFiles;
+		std::string					_clientMaxBody;
 	
 	public :
 		Http();
-		Http(std::map<std::string, std::vector<std::string> > data, std::vector<Server> servers);
+		Http(std::map<std::string, std::vector<std::string> > data, std::vector<Server> servers, std::map<int, File> errorFiles);
 		~Http();
 
 		// methods
-		void init(std::map<std::string, std::vector<std::string> > data, std::vector<Server> servers);
+		void init(std::map<std::string, std::vector<std::string> > data, std::vector<Server> servers, std::map<int, File> errorFiles);
 		
 		//getters
 		std::vector<Server> getServers();
-		std::string			getServerName();
+		std::vector<std::string>			getServerName();
 		Server				getDefaultServer();
-		std::map<int, File>	getErrorFiles();
+		const std::map<int, File>&	getErrorFiles();
 		std::string			getClientMaxBody();
 };
 

@@ -6,7 +6,7 @@
 /*   By: lperthui <lperthui@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 16:39:16 by lperthui          #+#    #+#             */
-/*   Updated: 2025/03/14 14:57:14 by lperthui         ###   ########.fr       */
+/*   Updated: 2025/03/16 21:57:04 by lperthui         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,22 @@ class File {
 		
 	public:
 		File();
+		File(std::string absolutePath);
 		File(std::string name, std::string root);
-		File(std::map<std::string, std::vector<std::string> > data);
 		~File();
+
+		// methods
+		void buildAbsolutePath();
+		void buildExtension();
+		void buildName();
+		void buildRoot();
+
+		// getters
+		std::string getName();
+		std::string getRoot();
+		std::string getAbsolutePath();
+		std::string getExtension();
+		
 };
 
 void printVector(std::vector<std::string> v);

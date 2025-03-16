@@ -4,6 +4,7 @@
 #define PORT 4580
 
 int main() {
+	// parser index dans server, faire en sorte que les key non valides soient rejetees;
 	try {
 		// Dans toutes les initialisations, verifier la taille des values pour pas qu'elles contiennent trop ou pas asser d'arguments
 		Data d("webservConfig.conf");

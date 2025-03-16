@@ -6,7 +6,7 @@
 /*   By: lperthui <lperthui@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 16:58:20 by lperthui          #+#    #+#             */
-/*   Updated: 2025/03/14 17:40:08 by lperthui         ###   ########.fr       */
+/*   Updated: 2025/03/16 22:04:14 by lperthui         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,47 @@
 
 Route::Route() {}
 
-Route::Route(std::map<std::string, std::vector<std::string> > data, std::map<std::string, std::string > fastcgiParam, std::string location) {
+Route::Route(std::map<std::string, std::vector<std::string> > data, std::map<std::string, std::string > fastcgiParam, std::string location, Methods method, std::map<int, File> errorFiles) {
 	// std::cout << "Route constructed!" << std::endl;
 	// for (std::map<std::string, std::vector<std::string> >::iterator it = data.begin(); it != data.end(); it++) {
 	// 	std::cout << "Key : " << it->first << " | Value : ";
 	// 	printVector(it->second);
 	// 	std::cout << std::endl;
 	// }
-	this->init(data, fastcgiParam, location);
+	this->init(data, fastcgiParam, location, method, errorFiles);
 }
 
-Route::Route(const Route &route) {}
+Route::Route(const Route &route) {
+	this->_files = route._files;
+	this->_errorFiles = route._errorFiles;
+	this->_methods = route._methods;
+	this->_acceptedExtensions = route._acceptedExtensions;
+	this->_defaultFile = route._defaultFile;
+	this->_location = route._location;
+	this->_root = route._root;
+	this->_redirection = route._redirection;
+	this->_redirectionCode = route._redirectionCode;
+	this->_internal = route._internal;
+	this->_autoIndex = route._autoIndex;
+	this->_fastcgiPass = route._fastcgiPass;
+	this->_fastcgiIndex = route._fastcgiIndex;
+	this->_fastcgiParam = route._fastcgiParam;
+	this->_include = route._include;
+	this->_clientBodyTempPath = route._clientBodyTempPath;
+	this->_uploadMaxFilesize = route._uploadMaxFilesize;
+	this->_clientMaxBodysize = route._clientMaxBodysize;
+}
 
-	Route::~Route() {}
+Route::~Route() {}
 
 //methods
 
-void Route::init(std::map<std::string, std::vector<std::string> > data, std::map<std::string, std::string > fastcgiParam, std::string location) {
+void Route::init(std::map<std::string, std::vector<std::string> > data, std::map<std::string, std::string > fastcgiParam, std::string location, Methods method, std::map<int, File> errorFiles) {
 	// reste a init la liste de fichier d'erreure le default file et _files
 	_location = location;
 	// verifier avant que les parametres dans fastcgiParam sont valide
 	_fastcgiParam = fastcgiParam;
-	
+	_methods = method;
 	try {
 		std::vector<std::string> value = getValue("root", data);
 		if (value.size() < 2) {
@@ -98,6 +117,14 @@ void Route::init(std::map<std::string, std::vector<std::string> > data, std::map
 	catch (std::logic_error & e) {
 		_fastcgiPass = "";
 	}
+
+	try {
+		std::vector<std::string> value = getValue("client_max_body_size", data);
+		_clientMaxBodysize = value[1];
+	}
+	catch (std::logic_error & e) {
+		_clientMaxBodysize = "";
+	}
 	
 	try {
 		std::vector<std::string> value = getValue("fastcgi_index", data);
@@ -120,7 +147,7 @@ void Route::init(std::map<std::string, std::vector<std::string> > data, std::map
 	catch (std::logic_error & e) {
 		_clientBodyTempPath = ""; // voir si il faut une valeure par defaut
 	}
-
+	
 	try {
 		std::vector<std::string> value = getValue("include", data);
 		for (int i = 1; i < value.size(); i++) {
@@ -130,22 +157,33 @@ void Route::init(std::map<std::string, std::vector<std::string> > data, std::map
 	catch (std::logic_error & e) {
 		
 	}
+	
+	try {
+		std::vector<std::string> value = getValue("upload_max_filesize", data);
+		if (value.size() < 2) {
+			throw std::invalid_argument("Incomplete upload_max_filesize.");
+		}
+		_uploadMaxFilesize = value[1];
+	}
+	catch (std::logic_error & e) {
+		_uploadMaxFilesize = "50M"; // voir si il faut une valeure par defaut
+	}
 }
 
 //getters
 
-std::map<std::string, File>		Route::getFiles() {
+const std::map<std::string, File>&		Route::getFiles() {
 	return _files;
 }
 
-std::map<int, File>				Route::getErrorFiles() {
+const std::map<int, File>&				Route::getErrorFiles() {
 	return _errorFiles;
 }
 
-std::vector<std::string>		Route::getMethods() {
+Methods							Route::getMethods() {
 	return _methods;
 }
-std::vector<std::string>		Route::getAcceptedExtensions() {
+const std::vector<std::string>&		Route::getAcceptedExtensions() {
 	return _acceptedExtensions;
 }
 
@@ -173,11 +211,11 @@ std::string						Route::getFastcgiIndex() {
 	return _fastcgiIndex;
 }
 
-std::map<std::string, std::string>		Route::getFastcgiParam() {
+const std::map<std::string, std::string>&		Route::getFastcgiParam() {
 	return _fastcgiParam;
 }
 
-std::vector<std::string>		Route::getInclude() {
+const std::vector<std::string>&		Route::getInclude() {
 	return _include;
 }
 
@@ -195,4 +233,12 @@ bool							Route::getInternal() {
 
 bool							Route::getAutoIndex() {
 	return _autoIndex;
+}
+
+std::string						Route::getUploadMaxFilesize() {
+	return _uploadMaxFilesize;
+}
+
+std::string						Route::getClientMaxBodysize() {
+	return _clientMaxBodysize;
 }

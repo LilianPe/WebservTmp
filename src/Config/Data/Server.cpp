@@ -6,7 +6,7 @@
 /*   By: lperthui <lperthui@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 17:08:04 by lperthui          #+#    #+#             */
-/*   Updated: 2025/03/14 15:49:11 by lperthui         ###   ########.fr       */
+/*   Updated: 2025/03/16 21:14:45 by lperthui         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,6 @@ Server::Server(std::map<std::string, std::vector<std::string> > data, std::vecto
 }
 
 Server::~Server() {};
-
-std::string Server::getName() {
-	return _serverNames[0];
-}
 
 void Server::init(std::map<std::string, std::vector<std::string> > data, std::vector<Route> routes) {
 	// Voir si oblige d'avoir au moins une route ? Si oui verif + throw
@@ -63,6 +59,14 @@ void Server::init(std::map<std::string, std::vector<std::string> > data, std::ve
 	}
 	
 	try {
+		std::vector<std::string> value = getValue("client_max_body_size", data);
+		_clientMaxBodysize = value[1];
+	}
+	catch (std::exception & e) {
+		_clientMaxBodysize = "";
+	}
+	
+	try {
 		std::vector<std::string> value = getValue("index", data);
 		if (value.size() == 1) {
 			throw std::logic_error("No index.");
@@ -93,4 +97,8 @@ std::string					Server::getRoot() {
 }
 std::vector<File>			Server::getIndex() {
 	return _index;
+}
+
+std::string					Server::getClientMaxBodysize() {
+	return _clientMaxBodysize;
 }

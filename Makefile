@@ -10,6 +10,7 @@ OBJ = \
 		src/Config/Data/Data.o \
 		src/Config/Data/File.o \
 		src/Config/Data/Route.o \
+		src/Config/Data/Methods.o \
 		src/Config/Data/Server.o \
 		src/Config/Data/Http.o \
 		src/Config/Data/Events.o \

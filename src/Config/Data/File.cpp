@@ -6,7 +6,7 @@
 /*   By: lperthui <lperthui@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 16:38:56 by lperthui          #+#    #+#             */
-/*   Updated: 2025/03/14 15:37:25 by lperthui         ###   ########.fr       */
+/*   Updated: 2025/03/16 21:59:21 by lperthui         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,15 @@
 
 File::File() {}
 
-File::File(std::string name, std::string root) : _name(name), _root(root) {
-	// reste a build absolute path et extension avec name et root
+File::File(std::string absolutePath) : _absolutePath(absolutePath) {
+	this->buildName();
+	this->buildRoot();
+	this->buildExtension();
 }
 
-File::File(std::map<std::string, std::vector<std::string> > data) {
-	// std::cout << "File constructed!" << std::endl;
-	// for (std::map<std::string, std::vector<std::string> >::iterator it = data.begin(); it != data.end(); it++) {
-	// 	std::cout << "Key : " << it->first << " | Value : ";
-	// 	printVector(it->second);
-	// 	std::cout << std::endl;
-	// }
+File::File(std::string name, std::string root) : _name(name), _root(root) {
+	this->buildAbsolutePath();
+	this->buildExtension();
 }
 
 File::~File() {}
@@ -35,4 +33,70 @@ void printVector(std::vector<std::string> v) {
 	for(it; it < v.end(); it++) {
 		std::cout << *it << std::endl;
 	}
+}
+
+//methods
+void File::buildAbsolutePath () {
+	if (this->getRoot() == "/") {
+		_absolutePath = "/" + this->getName();
+	}
+	else {
+		_absolutePath = this->getRoot() + "/" + this->getName();
+	}
+}
+
+void File::buildExtension() {
+	std::string file = this->getName();
+	size_t ext = file.rfind('.');
+	
+	if (ext == std::string::npos) {
+		// Gerer cas particulier
+		_extension = "";
+	}
+	else {
+		_extension = file.substr(ext + 1);
+	}
+}
+
+void File::buildName() {
+	std::string file = this->getName();
+	size_t ext = file.rfind('/');
+	
+	if (ext == std::string::npos) {
+		// Gerer cas particulier
+		_name = "";
+	}
+	else {
+		_name = file.substr(ext + 1);
+	}
+}
+
+void File::buildRoot() {
+	std::string file = this->getName();
+	size_t ext = file.rfind('/');
+	
+	if (ext == std::string::npos) {
+		// Gerer cas particulier
+		_root = "";
+	}
+	else {
+		_root = file.substr(0, ext - 1);
+	}
+}
+
+//getters
+std::string File::getName() {
+	return _name;
+}
+
+std::string File::getRoot() {
+	return _root;
+}
+
+std::string File::getAbsolutePath() {
+	return _absolutePath;
+}
+
+std::string File::getExtension() {
+	return _extension;
 }
